@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>默契大考驗 🃏</title>
+  <style>
+    :root {
+      --primary: #673ab7;
+      --primary-hover: #512da8;
+      --bg: #f0f2f5;
+      --card-bg: #ffffff;
+      --text: #202124;
+      --border: #dadce0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 90vh;
+    }
+    .container {
+      max-width: 580px;
+      width: 100%;
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .cover-img {
+      width: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--text);
+      text-align: center;
+    }
+    .intro {
+      color: #5f6368;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      white-space: pre-line;
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+    }
+    .progress-bar-bg {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      height: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background-color: var(--primary);
+      border-radius: 8px;
+      transition: width 0.3s ease;
+    }
+    .step {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .step.active {
+      display: block;
+    }
+    .question-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .q-title {
+      font-size: 1.15rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .q-text {
+      font-size: 1rem;
+      color: #3c4043;
+      margin-bottom: 16px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .option {
+      display: flex;
+      align-items: flex-start;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      padding: 14px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      line-height: 1.4;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .option:hover {
+      background-color: #f3e8ff;
+      border-color: var(--primary);
+    }
+    .option input {
+      margin-right: 12px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn {
+      flex: 1;
+      background-color: var(--primary);
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background-color: var(--primary-hover);
+    }
+    .btn-secondary {
+      background-color: #e0e0e0;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background-color: #d6d6d6;
+    }
+    /* 結果頁面 */
+    #result-section {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .score-badge {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 15px 0 10px 0;
+    }
+    .result-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #202124;
+      margin-bottom: 15px;
+    }
+    .result-img {
+      width: 85%;
+      max-width: 320px;
+      border-radius: 12px;
+      margin: 20px auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 進度條 -->
+  <div class="progress-bar-bg" id="progress-bg">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <!-- 步驟 0：封面頁 -->
+  <div class="step active" id="step-0">
+    <!-- 已更新最正確的浣熊圖連結 -->
+    <img src="https://i.imgur.com/v5Fq7Uj.png" alt="沙發上的貓咪與浣熊" class="cover-img">
+    <h1>默契大考驗 🃏</h1>
+    <div class="intro">這裡共有 10 道選擇題，請憑著你的直覺填寫。
+
+8 分以上: 恭喜你，準備好要求婚了嗎？ 💍✨
+5 到 8 分：Hmm… 要不要再考慮好好聊聊？ 🤔☕
+0 到 5 分 ：再仔細想想看吧 😭💔</div>
+    <button class="btn" onclick="nextStep()">開始闖關 🚀</button>
+  </div>
+
+  <!-- 步驟 1：Are You Ready? -->
+  <div class="step" id="step-1">
+    <div class="question-card">
+      <div class="q-title">Are You Ready?</div>
+      <label class="option"><input type="radio" name="ready" value="ok" checked> 準備好哩!</label>
+      <label class="option"><input type="radio" name="ready" value="no"> 我在想想.....</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一頁</button>
+      <button class="btn" onclick="nextStep()">進入卡牌 1 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 2：題卡 1 -->
+  <div class="step" id="step-2">
+    <div class="question-card">
+      <div class="q-title">【電池容量測試】🔋</div>
+      <div class="q-text">週末連假終於到了，最能讓你徹底充電的完美行程是？</div>
+      <label class="option"><input type="radio" name="q1" value="1" checked> 躲進專屬避難所，享受極致的個人 Me Time 空間</label>
+      <label class="option"><input type="radio" name="q1" value="0"> 揪團開趴、越多人越熱鬧才夠嗨！</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="nextStep()">下一題 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 3：題卡 2 -->
+  <div class="step" id="step-3">
+    <div class="question-card">
+      <div class="q-title">【引爆地雷區】💣</div>
+      <div class="q-text">哪種情境最容易讓你秒變火山爆發、踩到你的絕對底線？</div>
+      <label class="option"><input type="radio" name="q2" value="1" checked> 講過了還一直踩，持續被挑戰底線與邊界</label>
+      <label class="option"><input type="radio" name="q2" value="0"> 在外人面前不給面子，讓我當眾尷尬</label>
+      <label class="option"><input type="radio" name="q2" value="0"> 哪個我都不行! 我就是吉拉!</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="nextStep()">下一題 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 4：題卡 3 -->
+  <div class="step" id="step-4">
+    <div class="question-card">
+      <div class="q-title">【金錢魔法陣】💰</div>
+      <div class="q-text">談到結婚後的財務管理，你心中理想的模式是？</div>
+      <label class="option"><input type="radio" name="q3" value="1" checked> 自立自強！各自做好財務規劃與獨立管理</label>
+      <label class="option"><input type="radio" name="q3" value="0"> 共同經營！所有資源合併在一起集中調度</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="nextStep()">下一題 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 5：題卡 4 -->
+  <div class="step" id="step-5">
+    <div class="question-card">
+      <div class="q-title">【空間邊界哲學】🏰</div>
+      <div class="q-text">關於未來的居住與生活習慣，你更嚮往哪種模式？</div>
+      <label class="option"><input type="radio" name="q4" value="1" checked> 就算在同一個屋簷下，也要有屬於自己的獨立小天地</label>
+      <label class="option"><input type="radio" name="q4" value="0"> 黏在一起不分離，隨時隨地都要享受黏答答的兩人世界</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="nextStep()">下一題 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 6：題卡 5 -->
+  <div class="step" id="step-6">
+    <div class="question-card">
+      <div class="q-title">【數學算術題】➕</div>
+      <div class="q-text">在你眼中，兩個人決定走在一起，最完美的數學公式是？</div>
+      <label class="option"><input type="radio" name="q5" value="1" checked> 1 + 1 = 11（兩個獨立強大的個體，並排站能發揮倍數能量）</label>
+      <label class="option"><input type="radio" name="q5" value="0"> 1 + 1 = 2（兩個人融合成一個組合，回歸標準答案）</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="nextStep()">下一題 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 7：題卡 6 -->
+  <div class="step" id="step-7">
+    <div class="question-card">
+      <div class="q-title">【課金與養育大考驗】🐾👶</div>
+      <div class="q-text">要為這個家添加「新成員」時，對於背後要投入的無限時間與金錢，你的心態是？</div>
+      <label class="option"><input type="radio" name="q6" value="1" checked> 責任重於一切：清楚知道養一個家不只是浪漫，更是實打實的責任！</label>
+      <label class="option"><input type="radio" name="q6" value="0"> 快樂享受當下：養了自然就會找到辦法，不用把自己逼得太緊！</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="nextStep()">下一題 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 8：題卡 7 -->
+  <div class="step" id="step-8">
+    <div class="question-card">
+      <div class="q-title">【購物狂的修養】🛒</div>
+      <div class="q-text">走進商場或點開購物車，你最看重的消費原則是？</div>
+      <label class="option"><input type="radio" name="q7" value="1" checked> 務實至上！實用第一，沒實際需求絕不上當</label>
+      <label class="option"><input type="radio" name="q7" value="0"> 品牌光彩！品質與品牌要能彰顯個人價值與品味</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="nextStep()">下一題 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 9：題卡 8 -->
+  <div class="step" id="step-9">
+    <div class="question-card">
+      <div class="q-title">【航海圖指南】🧭</div>
+      <div class="q-text">人生很長，如果未來遇到某些突發狀況，你的應對風格是？</div>
+      <label class="option"><input type="radio" name="q8" value="1" checked> 隨時具備切換與扛責能力：只要家庭需要，我隨時有能力與決心調整型態成為後盾！</label>
+      <label class="option"><input type="radio" name="q8" value="0"> 保持彈性隨緣，船到橋頭自然直：相信生命自有出路，遇到問題再說。</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="nextStep()">下一題 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 10：題卡 9 -->
+  <div class="step" id="step-10">
+    <div class="question-card">
+      <div class="q-title">【拆彈專家模式】💣💥</div>
+      <div class="q-text">兩人難免有意見不合、火藥味濃的時候，你習慣的拆彈方式是？</div>
+      <label class="option"><input type="radio" name="q9" value="1" checked> 先按下暫停鍵，給彼此靜一靜、情緒穩定後再好好說</label>
+      <label class="option"><input type="radio" name="q9" value="0"> 絕不隔夜！就算有情緒也要當下列車說清楚講明白</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="nextStep()">最後一題 ➡️</button>
+    </div>
+  </div>
+
+  <!-- 步驟 11：題卡 10 -->
+  <div class="step" id="step-11">
+    <div class="question-card">
+      <div class="q-title">【身體使用說明書】🧘</div>
+      <div class="q-text">對於身體健康與生活作息，你抱持著什麼樣的態度？</div>
+      <label class="option"><input type="radio" name="q10" value="1" checked> 自律管理！了解身體狀況，預防勝於治療</label>
+      <label class="option"><input type="radio" name="q10" value="0"> 隨緣佛系！生命自有出路，順其自然就好</label>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="prevStep()">上一題</button>
+      <button class="btn" onclick="showResult()">查看默契結果 ✨</button>
+    </div>
+  </div>
+
+  <!-- 步驟 12：結果頁 -->
+  <div class="step" id="step-result">
+    <div id="result-section">
+      <h1>默契大考驗結果 🃏</h1>
+      <div class="score-badge" id="score-display">0 / 10 分</div>
+      <div class="result-title" id="result-msg"></div>
+      <img id="result-image" src="" alt="求婚成功圖片" class="result-img" style="display:none;">
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentStep = 0;
+
+  function updateView() {
+    document.querySelectorAll('.step').forEach((el, idx) => {
+      if (idx === currentStep) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    });
+
+    const progressBg = document.getElementById('progress-bg');
+    const progressBar = document.getElementById('progress-bar');
+    if (currentStep > 0 && currentStep <= 11) {
+      progressBg.style.display = 'block';
+      const pct = (currentStep / 11) * 100;
+      progressBar.style.width = `${pct}%`;
+    } else {
+      progressBg.style.display = 'none';
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep() {
+    if (currentStep < 11) {
+      currentStep++;
+      updateView();
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      updateView();
+    }
+  }
+
+  function showResult() {
+    let score = 0;
+    for (let i = 1; i <= 10; i++) {
+      const selected = document.querySelector(`input[name="q${i}"]:checked`);
+      if (selected) {
+        score += parseInt(selected.value);
+      }
+    }
+
+    currentStep = 12;
+    updateView();
+
+    const scoreDisplay = document.getElementById('score-display');
+    const resultMsg = document.getElementById('result-msg');
+    const resultImg = document.getElementById('result-image');
+
+    scoreDisplay.innerText = `${score} / 10 分`;
+
+    if (score >= 8) {
+      resultMsg.innerText = "恭喜你，準備好要求婚了嗎？ 💍✨";
+      resultImg.src = "https://i.imgur.com/Xlhfmuf.png";
+      resultImg.style.display = "block";
+    } else if (score >= 5) {
+      resultMsg.innerText = "Hmm… 要不要再考慮好好聊聊？ 🤔☕";
+      resultImg.style.display = "none";
+    } else {
+      resultMsg.innerText = "再仔細想想看吧 😭💔";
+      resultImg.style.display = "none";
+    }
+  }
+</script>
+
+</body>
+</html>
